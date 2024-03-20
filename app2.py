@@ -61,6 +61,7 @@ def fetch_user_details():
         print("Error fetching user details:", e)
         return []
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -262,16 +263,32 @@ def create_video(transition_effect='pixelize'):
 
 
         add_audio_to_video()
-
-
+        
         cursor.close()
         conn.close()
-
+        delete_folders()
         return True
 
     except psycopg2.Error as e:
         print("Error interacting with CockroachDB:", e)
         return False
+
+def delete_folders():
+    try:
+        uploads_folder = os.path.join(os.getcwd(), 'uploads')
+        audio_folder = os.path.join(os.getcwd(), 'audio_uploads')
+        for file_name in os.listdir(uploads_folder):
+            file_path = os.path.join(uploads_folder, file_name)
+            os.remove(file_path)
+        for file_name in os.listdir(audio_folder):
+            file_path = os.path.join(audio_folder, file_name)
+            os.remove(file_path)
+        
+        print("All images deleted successfully.")
+    except Exception as e:
+        print("Error deleting images:", e)
+
+
 
 
 def add_audio_to_video():
